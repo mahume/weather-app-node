@@ -2,19 +2,23 @@ const request = require('request');
 require('dotenv').config();
 
 // Geocoding
-// const geocodeURL = `https://api.mapbox.com/geocoding/v5/mapbox.places/Los%20Angeles.json?access_token=${process.env.MAPBOX_KEY}`
-// request({
-//   url: geocodeURL,
-//   json: true,
-// }, (error, response) => {
-//   const { center: [ lng, lat ] } = response.body.features[0];
-//   console.log(lat, lng);
-  
-// })
+const geocodeURL = `https://api.mapbox.com/geocoding/v5/mapbox.places/Los%20Angeles.json?access_token=${process.env.MAPBOX_KEY}`
+request({
+  url: geocodeURL,
+  json: true,
+}, (error, response) => {
+  if (error) {
+    console.log('Unable to connect to location server.');
+  } else if (response.body.features.length === 0) {
+    console.log('Unable to find location.');
+  } else {
+    const { center: [ lng, lat ] } = response.body.features[0];
+    console.log(lat, lng);
+  }
+})
 
 // Weather
 const weatherURL = `https://api.darksky.net/forecast/${process.env.DARK_SKY_KEY}/37.8267,-122.4233`
-
 request({ 
   url: weatherURL,
   json: true,
