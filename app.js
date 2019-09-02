@@ -1,38 +1,23 @@
-const request = require('request');
 require('dotenv').config();
+const geocode = require('./utils/geocode');
+const weather = require('./utils/weather');
 
-// Geocoding
-const geocodeURL = `https://api.mapbox.com/geocoding/v5/mapbox.places/Los%20Angeles.json?access_token=${process.env.MAPBOX_KEY}`
-request({
-  url: geocodeURL,
-  json: true,
-}, (error, response) => {
-  if (error) {
-    console.log('Unable to connect to location server.');
-  } else if (response.body.features.length === 0) {
-    console.log('Unable to find location.');
-  } else {
-    const { center: [ lng, lat ] } = response.body.features[0];
-    console.log(lat, lng);
-  }
-})
+const location = process.argv[2];
 
-// Weather
-const weatherURL = `https://api.darksky.net/forecast/${process.env.DARK_SKY_KEY}/37.8267,-122.4233`
-request({ 
-  url: weatherURL,
-  json: true,
-}, (error, response) => {
-  if (error) {
-    console.log('Unable to connect to weather server.');
-  } else if (response.body.error) {
-    console.log('Unable to find location.');
-  } else {
-    const { temperature, precipProbability } = response.body.currently;
-    const { summary } = response.body.daily.data[0];
-    console.log(`
-    Today's forecast: ${summary}
-    It is currently ${temperature}° out. There is a ${precipProbability}% chance of rain.
-    `);
-  }
-})
+if (!location) {
+  console.log('Provide address');
+} else {
+  geocode(location, (error, { place_name, lat, lng }) => {
+    if (error) {
+      return console.error(error);
+    }
+    weather(lat, lng, (error, forecastData) => {
+      if (error) {
+        return console.error(error);
+      }
+      console.log(place_name);
+      console.log(forecastData);
+    })
+  })
+}
+
