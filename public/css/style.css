@@ -40,3 +40,16 @@ footer {
   margin-top: 15px;
   padding: 15px 0;
 }
+
+input {
+  border: 1px solid #ccc;
+  padding: 7px;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid #888;
+  background: #888;
+  color: white;
+  padding: 7px;
+}
